@@ -1,4 +1,4 @@
-use std::{borrow::Borrow, collections::HashMap, mem};
+use std::{collections::HashMap};
 
 #[derive(Debug)]
 pub struct ClanSystem {
@@ -15,11 +15,10 @@ impl ClanSystem {
      * Returns a list of the names of the clan members for the given clan id.
      */
     pub fn get_clan_member_names(&self, clan_id: &str) -> Vec<String> {
-        if self.clans.contains_key(clan_id){
-            return self.clans.get(clan_id).unwrap().to_vec();
-        } else{
-            return Vec::new();
-        }
+        match self.clans.get(clan_id) {
+			None => Vec::new(),
+			Some(_clan) => self.clans.get(clan_id).unwrap().to_vec(),
+		}
     }
 
     /**
@@ -33,11 +32,10 @@ impl ClanSystem {
      * Returns the number of clan members for the given clan id.
      */
     pub fn get_clan_member_count(&self, clan_id: &str) -> usize {
-        if self.clans.contains_key(clan_id){
-            return self.clans.get(clan_id).unwrap().len();
-        } else{
-            return 0;
-        }
+        match self.clans.get(clan_id) {
+			None => 0,
+			Some(clan) => clan.len(),
+		}
     }
 
     /**
@@ -52,16 +50,14 @@ impl ClanSystem {
                 index = Some(key.clone());
             }
         }
-        return index;
+        index
     }
 
     pub fn add_member_to_clan(&mut self, clan_id: &str, crab_name: &str) {
         if let Some(clan) = self.clans.get_mut(clan_id) {
 			clan.push(String::from(crab_name));
 		} else {
-            let mut list: Vec<String> = Vec::new();
-            list.push(String::from(crab_name));
-			self.clans.insert(String::from(clan_id).clone(), list);
+			self.clans.insert(String::from(clan_id).clone(), vec![String::from(crab_name)]);
 		}
     }
 }

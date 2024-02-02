@@ -49,9 +49,9 @@ impl Beach {
      */
     pub fn get_fastest_crab(&self) -> Option<&Crab> {
         if self.crabs.is_empty(){
-            return None;
+            None
         } else{
-            return self.crabs.iter().max_by_key(|crab| crab.speed());
+            self.crabs.iter().max_by_key(|crab| crab.speed())
         }
     }
 
@@ -65,7 +65,7 @@ impl Beach {
                 crabs_vec.push(crab);
             }
         }
-        return crabs_vec;
+        crabs_vec
     }
 
     /**
@@ -108,11 +108,11 @@ impl Beach {
 		let clan2 = self.clans.get_clan_member_names(id2);
         let mut speed1 = 0;
         let mut speed2 = 0;
-	    for (index, name) in clan1.iter().enumerate(){
+	    for (_index, name) in clan1.iter().enumerate(){
             let crab = self.find_crabs_by_name(name)[0];
             speed1 += crab.speed();
         }
-        for (index, name) in clan2.iter().enumerate(){
+        for (_index, name) in clan2.iter().enumerate(){
             let crab = self.find_crabs_by_name(name)[0];
             speed2 += crab.speed();
         }
