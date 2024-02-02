@@ -118,8 +118,8 @@ impl Crab {
     pub fn hunt(&mut self) -> bool { 
         let mut result = false;
         let mut caught: Vec<Option<(Box<dyn Prey>, usize)>> = Vec::new();  
-        while true{
-            if let Some((mut current_prey, mut index)) = self.catch_prey() {
+        loop {
+            if let Some((mut current_prey, index)) = self.catch_prey() {
                 if current_prey.try_escape(&self) || current_prey.diet() != self.diet() {
                     caught.push(Some((current_prey, index)));
                 }
@@ -132,13 +132,13 @@ impl Crab {
             }
         }
         while !caught.is_empty() {
-            if let Some((mut current_prey, mut index)) = caught.pop().unwrap() {
+            if let Some((current_prey, index)) = caught.pop().unwrap() {
                 self.release_prey(current_prey, index);
             } else{
                 break;
             }
         }
-        return result;
+        return result
     }
 
     /**

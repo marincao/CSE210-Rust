@@ -58,6 +58,6 @@ impl Ocean {
 		}
 		let reef_copy = Rc::new(RefCell::new(reef));
 		self.reefs.push(Rc::clone(&reef_copy));
-		return reef_copy
+		reef_copy
     }
 }

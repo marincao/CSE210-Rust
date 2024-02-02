@@ -7,18 +7,20 @@ use std::slice::Iter;
 #[derive(Debug)]
 pub struct Beach {
     // TODO: Declare the fields of the Beach struct here.
+    crabs: Vec<Crab>,
+    clans: ClanSystem,
 }
 
 impl Beach {
     pub fn new() -> Beach {
-        unimplemented!();
+        Beach {crabs: Vec::new(), clans: ClanSystem::new()}
     }
 
     /**
      * Returns the number of crabs on the beach.
      */
     pub fn size(&self) -> usize {
-        unimplemented!();
+        self.crabs.len()
     }
 
     /**
@@ -29,15 +31,15 @@ impl Beach {
      *     - The newly added crab should be at the END of the collection.
      */
     pub fn add_crab(&mut self, crab: Crab) {
-        unimplemented!();
+        self.crabs.push(crab);
     }
 
     pub fn get_crab(&self, index: usize) -> &Crab {
-        unimplemented!();
+        &self.crabs[index]
     }
 
     pub fn crabs(&self) -> Iter<Crab> {
-        unimplemented!();
+        self.crabs.iter()
     }
 
     /**
@@ -46,14 +48,24 @@ impl Beach {
      *   - Some of a reference to the Crab with the highest speed.
      */
     pub fn get_fastest_crab(&self) -> Option<&Crab> {
-        unimplemented!();
+        if self.crabs.is_empty(){
+            None
+        } else{
+            self.crabs.iter().max_by_key(|crab| crab.speed())
+        }
     }
 
     /**
      * Returns a vector of references to the crabs with a given name.
      */
     pub fn find_crabs_by_name(&self, name: &str) -> Vec<&Crab> {
-        unimplemented!();
+        let mut crabs_vec = Vec::new();
+        for crab in self.crabs.iter() {
+            if crab.name() == name{
+                crabs_vec.push(crab);
+            }
+        }
+        crabs_vec
     }
 
     /**
@@ -62,14 +74,18 @@ impl Beach {
      * the method should panic.
      */
     pub fn breed_crabs(&mut self, i: usize, j: usize, name: String) {
-        unimplemented!();
+        let color = Color::cross(&self.crabs[i].color(), &self.crabs[j].color());
+        let speed = 1;
+        let diet = Diet::random_diet();
+        let crab = Crab::new(name, speed, color, diet);
+        self.add_crab(crab);
     }
 
     /**
      * Returns a reference to the clan system associated with the beach.
      */
     pub fn get_clan_system(&self) -> &ClanSystem {
-        unimplemented!();
+        &self.clans
     }
 
     /**
@@ -77,7 +93,7 @@ impl Beach {
      * A crab can only belong to one clan.
      */
     pub fn add_member_to_clan(&mut self, clan_id: &str, crab_name: &str) {
-        unimplemented!();
+        self.clans.add_member_to_clan(clan_id, crab_name);
     }
 
     /**
@@ -85,6 +101,29 @@ impl Beach {
      * Return `None` if there are no clear winners between two different existing clans. If the inputs are invalid, return an Err string.
      */
     pub fn get_winner_clan(&self, id1: &str, id2: &str) -> Result<Option<String>, String> {
-        unimplemented!();
+        if !self.clans.clans.contains_key(id1) || !self.clans.clans.contains_key(id2){
+            return Err(String::from("empty_clan!"));
+        }
+        let clan1 = self.clans.get_clan_member_names(id1);
+		let clan2 = self.clans.get_clan_member_names(id2);
+        let mut speed1 = 0;
+        let mut speed2 = 0;
+	    for (_index, name) in clan1.iter().enumerate(){
+            let crab = self.find_crabs_by_name(name)[0];
+            speed1 += crab.speed();
+        }
+        for (_index, name) in clan2.iter().enumerate(){
+            let crab = self.find_crabs_by_name(name)[0];
+            speed2 += crab.speed();
+        }
+	    speed1 = speed1/(clan1.len() as u32);
+        speed2 = speed2/(clan2.len() as u32);
+		if speed1 > speed2 {
+			Ok(Some(id1.to_string().clone()))
+		} else if speed1 < speed2 {
+			Ok(Some(id2.to_string().clone()))
+		} else {
+			Ok(None)
+		}
     }
 }
